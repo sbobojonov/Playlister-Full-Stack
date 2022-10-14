@@ -143,6 +143,22 @@ export const useGlobalStore = () => {
         asyncChangeListName(id);
     }
 
+    store.createNewList = function () {
+        async function asyncCreateNewList() {
+            let response = await api.createPlaylist({"name": "Untitled", "songs":[]});
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                storeReducer({
+                    type: GlobalStoreActionType.CREATE_NEW_LIST,
+                    payload: playlist
+                });
+                store.history.push("/playlist/" + playlist._id);
+
+            }
+        }
+        asyncCreateNewList();
+    }
+
     // THIS FUNCTION PROCESSES CLOSING THE CURRENTLY LOADED LIST
     store.closeCurrentList = function () {
         storeReducer({
