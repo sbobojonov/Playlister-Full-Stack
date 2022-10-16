@@ -154,6 +154,74 @@ input {
 
 /* THIS STYLE SHEET MANAGES STYLE FOR OUR MODAL, i.e. DIALOG BOX */
 
+.modal-root {
+  position: relative;
+  max-width: 60vw;
+  max-height: 600vh;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  background: var(--swatch-complement);
+  cursor: default;
+  border-width: 2px;
+  border-color: black;
+  border-style: solid;
+  box-shadow: 5px 10px #888888;
+}
+
+.modal-root>* {
+  padding: 1rem;
+}
+
+.modal-north {
+  font-size: 32pt;
+  font-weight: bold;
+  background-color: #669966;
+  color: white;
+  text-align: center;
+}
+
+.modal-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-center .modal-center-content {
+
+ text-align: center;
+  font-size: 24pt;
+  color: black;
+  padding: 1rem;
+}
+.modal-center-content > span{
+  font-weight: bolder;
+  font-style: italic;
+}
+
+.modal-south {
+  display: flex;
+  flex-direction: row;
+  background-color: lightgray;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.modal-prompt {
+  font-size: 28pt;
+  font-weight: bold;
+}
+
+.modal-textfield {
+  font-size: 28pt;
+}
+
+.modal-button {
+  font-size: 20pt;
+  margin: 0 20px;
+}
+
 .modal {
   position: fixed;
   top: 0;

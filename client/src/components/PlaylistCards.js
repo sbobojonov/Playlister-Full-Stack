@@ -11,7 +11,10 @@ import { GlobalStoreContext } from '../store'
 function PlaylistCards() {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
-
+    if (!store.currentList) {
+        store.history.push("/") // go home
+        return null
+    }
     return (
         <div id="playlist-cards">
         {
