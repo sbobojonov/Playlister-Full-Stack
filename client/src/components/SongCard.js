@@ -6,7 +6,8 @@ function SongCard(props) {
 
     const { song, index } = props;
 
-    const handleRemoveSong = () => {
+    const handleRemoveSong = (event) => {
+        event.stopPropagation();
         store.markSongForRemoval(index);
     }
 

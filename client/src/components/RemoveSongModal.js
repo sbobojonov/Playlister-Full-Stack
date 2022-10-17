@@ -4,7 +4,7 @@ import { GlobalStoreContext } from '../store';
 function RemoveSongModal() {
   const { store } = useContext(GlobalStoreContext);
   const [songName, setSongName] = useState('');
-
+  
   const handleRemoveSong = () => {
     store.addRemoveSongTransaction();
     hideRemoveSongModal()

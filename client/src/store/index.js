@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import jsTPS from '../common/jsTPS'
 import api from '../api'
 import AddSong_Transaction from '../transactions/AddSong_Transaction'
@@ -23,7 +23,7 @@ export const GlobalStoreActionType = {
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
-    CLOSE_MODAL: "CLOSE_MODAL",
+    SET_MODAL: "SET_MODAL",
     MARK_SONG: "MARK_SONG"
 }
 
@@ -134,7 +134,7 @@ export const useGlobalStore = () => {
                 });
             }
             // TOGGLE THE DELETE MODAL
-            case GlobalStoreActionType.CLOSE_MODAL: {
+            case GlobalStoreActionType.SET_MODAL: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
                     currentList: store.currentList,
@@ -147,7 +147,6 @@ export const useGlobalStore = () => {
             }
             // MARK A SONG
             case GlobalStoreActionType.MARK_SONG: {
-                console.log(payload)
                 return setStore({
                     idNamePairs: payload.idNamePairs,
                     currentList: store.currentList,
@@ -279,10 +278,17 @@ export const useGlobalStore = () => {
         });
     }
 
+    store.openModal = function (modal) {
+        storeReducer({
+            type: GlobalStoreActionType.SET_MODAL,
+            payload: modal
+        });
+    }
+
     // THIS FUNCTION CLOSES THE MODAL
     store.closeModal = function () {
         storeReducer({
-            type: GlobalStoreActionType.CLOSE_MODAL,
+            type: GlobalStoreActionType.SET_MODAL,
             payload: false
         });
     }
@@ -297,6 +303,7 @@ export const useGlobalStore = () => {
                 modal: "delete-list" 
             }
         });
+
     }
 
     // THIS FUNCTION TAKES IN AN ID AND RETURNS THE PLAYLIST NAME
@@ -353,20 +360,18 @@ export const useGlobalStore = () => {
     }
 
     store.markSongForRemoval = function (index) {
-        console.log("Marking song for removal: " + index);
         storeReducer({
             type: GlobalStoreActionType.MARK_SONG,
             payload: { 
                 index: index, 
                 idNamePairs: store.idNamePairs,
-                modal: "remove-song" 
+                modal: "remove-song"
             }
         });
-        console.log("song marked: " + store.markedSong + " for " + store.modal);
     }
 
     store.addRemoveSongTransaction = function () {
-        console.log(store.currentList.songs[store.markedSong]);
+        console.log("adding transaction: " + store.currentList.songs[store.markedSong]);
         let transaction = new RemoveSong_Transaction(store, store.markedSong, store.currentList.songs[store.markedSong]);
         tps.addTransaction(transaction);
     }
@@ -387,7 +392,7 @@ export const useGlobalStore = () => {
         asyncRemoveSong();
     }
 
-    store.addBackTransaction = function (index, song) {
+    store.addBackSong = function (index, song) {
         store.currentList.songs.splice(index, 0, song);
         async function asyncAddBackTransaction() {
             let response = await api.updatePlaylistById(store.currentList._id, store.currentList);
@@ -401,7 +406,6 @@ export const useGlobalStore = () => {
         }
         asyncAddBackTransaction();
     }
-
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
     return { store, storeReducer };
