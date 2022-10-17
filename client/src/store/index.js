@@ -1,9 +1,10 @@
-import { createContext, StrictMode, useEffect, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import jsTPS from '../common/jsTPS'
 import api from '../api'
 import AddSong_Transaction from '../transactions/AddSong_Transaction'
 import RemoveSong_Transaction from '../transactions/RemoveSong_Transaction'
 import EditSong_Transaction from '../transactions/EditSong_Transaction'
+import MoveSong_Transaction from '../transactions/MoveSong_Transaction'
 
 export const GlobalStoreContext = createContext({});
 
@@ -436,6 +437,33 @@ export const useGlobalStore = () => {
             }
         }
         asyncEditSong();
+    }
+
+    store.addMoveSongTransaction = function (sourceIndex, targetIndex) {
+        console.log("transacting...")
+        let transaction = new MoveSong_Transaction(store, sourceIndex, targetIndex);
+        tps.addTransaction(transaction);
+    }
+
+    store.moveSong = function (oldIndex, newIndex) {
+        let editedList = store.currentList.songs
+        let song = editedList[oldIndex]
+        editedList.splice(oldIndex, 1);
+        editedList.splice(newIndex, 0, song);
+        console.log(editedList);
+        store.currentList.songs = editedList;
+
+        async function asyncMoveSong() {
+            let response = await api.updatePlaylistById(store.currentList._id, store.currentList);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_LIST,
+                    payload: playlist
+                });
+            }
+        }
+        asyncMoveSong();
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
