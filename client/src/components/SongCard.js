@@ -34,7 +34,7 @@ function SongCard(props) {
         setIsDragging(false);
         setDraggedTo(false);
 
-        store.moveSong(sourceIndex, targetIndex);
+        store.addMoveSongTransaction(sourceIndex, targetIndex);
     }
     
     const handleRemoveSong = (event) => {
