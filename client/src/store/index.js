@@ -1,8 +1,9 @@
-import { createContext, useEffect, useState } from 'react'
+import { createContext, StrictMode, useEffect, useState } from 'react'
 import jsTPS from '../common/jsTPS'
 import api from '../api'
 import AddSong_Transaction from '../transactions/AddSong_Transaction'
 import RemoveSong_Transaction from '../transactions/RemoveSong_Transaction'
+import EditSong_Transaction from '../transactions/EditSong_Transaction'
 
 export const GlobalStoreContext = createContext({});
 
@@ -371,7 +372,6 @@ export const useGlobalStore = () => {
     }
 
     store.addRemoveSongTransaction = function () {
-        console.log("adding transaction: " + store.currentList.songs[store.markedSong]);
         let transaction = new RemoveSong_Transaction(store, store.markedSong, store.currentList.songs[store.markedSong]);
         tps.addTransaction(transaction);
     }
@@ -405,6 +405,37 @@ export const useGlobalStore = () => {
             }
         }
         asyncAddBackTransaction();
+    }
+
+    store.markSongForEdit = function (index) {
+        storeReducer({
+            type: GlobalStoreActionType.MARK_SONG,
+            payload: {
+                index: index,
+                idNamePairs: store.idNamePairs,
+                modal: "edit-song"
+            }
+        });
+    }
+
+    store.addEditSongTransaction = function (editedSong) {
+        let transaction = new EditSong_Transaction(store, store.markedSong, store.currentList.songs[store.markedSong], editedSong);
+        tps.addTransaction(transaction);
+    }
+
+    store.editSong = function (index, editedSong) {
+        store.currentList.songs[index] = editedSong;
+        async function asyncEditSong() {
+            let response = await api.updatePlaylistById(store.currentList._id, store.currentList);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_LIST,
+                    payload: playlist
+                });
+            }
+        }
+        asyncEditSong();
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT

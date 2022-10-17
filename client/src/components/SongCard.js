@@ -11,12 +11,18 @@ function SongCard(props) {
         store.markSongForRemoval(index);
     }
 
+    const handleEditSong = (event) => {
+        event.stopPropagation();
+        store.markSongForEdit(index);
+    }
+
     let cardClass = "list-card unselected-list-card";
     return (
         <div
             key={index}
             id={'song-' + index + '-card'}
             className={cardClass}
+            onDoubleClick={handleEditSong}
         >
             {index + 1}.
             <a
