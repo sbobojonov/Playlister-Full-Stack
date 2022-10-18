@@ -1,6 +1,7 @@
-import { useContext } from 'react'
+import { useContext , useState, useEffect } from 'react'
 import { GlobalStoreContext } from '../store'
 import { useHistory } from 'react-router-dom'
+
 /*
     This toolbar is a functional React component that
     manages the undo/redo/close buttons.
@@ -10,6 +11,7 @@ import { useHistory } from 'react-router-dom'
 function EditToolbar() {
     const { store } = useContext(GlobalStoreContext);
     const history = useHistory();
+    const [editStatus, setEditStatus] = useState(true);
 
     let enabledButtonClass = "playlister-button";
 
@@ -18,10 +20,12 @@ function EditToolbar() {
     }
 
     function handleUndo() {
+        console.log("undoing");
         store.undo();
     }
     
     function handleRedo() {
+        console.log("redoing");
         store.redo();
     }
     
@@ -29,13 +33,19 @@ function EditToolbar() {
         history.push("/");
         store.closeCurrentList();
     }
+
+    useEffect(() => {
+        if (store.currentList === null || store.modalActive !== false) {
+            setEditStatus(true);
+        } else {
+            setEditStatus(false);
+        }
+    }, [store.currentList, store.modalActive]);
     
-    let editStatus = false;
     
-    if (store.isListNameEditActive) {
-        editStatus = true;
-    }
-    
+    let undoStatus = store.hasUndo() && (store.modalActive === false);
+    let redoStatus = store.hasRedo() && (store.modalActive === false);
+
     return (
         <span id="edit-toolbar">
             <input
@@ -49,7 +59,7 @@ function EditToolbar() {
             <input
                 type="button"
                 id='undo-button'
-                disabled={editStatus}
+                disabled={!undoStatus}
                 value="⟲"
                 className={enabledButtonClass}
                 onClick={handleUndo}
@@ -57,7 +67,7 @@ function EditToolbar() {
             <input
                 type="button"
                 id='redo-button'
-                disabled={editStatus}
+                disabled={!redoStatus}
                 value="⟳"
                 className={enabledButtonClass}
                 onClick={handleRedo}

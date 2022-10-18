@@ -37,7 +37,7 @@ function EditSongModal() {
     setSong(
       (store.markedSong !== null) ? store.currentList.songs[store.markedSong] : null
     );
-  }, [store.markedSong]);
+  }, [store.markedSong, store.currentList]);
   
   useEffect(() => {
     console.log("changing song..." + ((song !== null) ? song.title : null));
@@ -51,11 +51,11 @@ function EditSongModal() {
           </div>
           <div id="edit-song-modal-content" className="modal-center">
               <div id="title-prompt" className="modal-prompt">Title:</div>
-              <input id="edit-song-modal-title-textfield" className='modal-textfield' type="text" defaultValue={song != null ? song.title : ""} onChange={handleUpdateTitle}/>
+              <input id="edit-song-modal-title-textfield" className='modal-textfield' type="text" value={song != null ? song.title : ""} onChange={handleUpdateTitle}/>
               <div id="artist-prompt" className="modal-prompt">Artist:</div>
-              <input id="edit-song-modal-artist-textfield" className='modal-textfield' type="text" defaultValue={song != null ? song.artist : ""} onChange={handleUpdateArtist}/>
-              <div id="you-tube-id-prompt" className="modal-prompt">You Tube Id:</div>
-              <input id="edit-song-modal-youTubeId-textfield" className='modal-textfield' type="text" defaultValue={song != null ? song.youTubeId : ""} onChange={handleUpdateYtId}/>
+              <input id="edit-song-modal-artist-textfield" className='modal-textfield' type="text" value={song != null ? song.artist : ""} onChange={handleUpdateArtist}/>
+              <div id="you-tube-id-prompt" className="modal-prompt">YouTube Id:</div>
+              <input id="edit-song-modal-youTubeId-textfield" className='modal-textfield' type="text" value={song != null ? song.youTubeId : ""} onChange={handleUpdateYtId}/>
           </div>
           <div className="modal-south">
               <input type="button" 

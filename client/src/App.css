@@ -77,7 +77,8 @@ body {
   height: 65%;
   grid-column: 1 / 3;
   grid-row: 2 / 3;
-  display:grid;
+  display:flex;
+  flex-direction: column;
   background-color: var(--swatch-primary);
 }
 
@@ -103,7 +104,6 @@ body {
   text-decoration: none;
   transition: all 250ms;
   user-select: none;
-  -webkit-user-select: none;
   touch-action: manipulation;
   vertical-align: baseline;
   width: auto;
@@ -195,11 +195,11 @@ input {
   font-size:20pt;
 }
 
-.disabled {
+:disabled {
   background-color: lightgray;
 }
 
-.disabled:hover {
+:disabled:hover {
   color: var(--swatch-neutral);
 }
 
@@ -316,6 +316,7 @@ span {
 #you-tube-id-prompt {
   grid-column: 1 / 2;
   grid-row: 3 / 4;
+  width:7em;
 }
 
 #edit-song-modal-youTubeId-textfield {

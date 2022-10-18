@@ -41,7 +41,7 @@ export const useGlobalStore = () => {
         currentList: null,
         newListCounter: 0,
         listNameActive: false,
-        modalActive: null,
+        modalActive: false,
         listToDelete: null,
         markedSong: null
     });
@@ -58,7 +58,7 @@ export const useGlobalStore = () => {
                     currentList: null,
                     newListCounter: store.newListCounter,
                     listNameActive: false,
-                    modalActive: null,
+                    modalActive: false,
                     listToDelete: null,
                     markedSong: null
                 });
@@ -70,7 +70,7 @@ export const useGlobalStore = () => {
                     currentList: null,
                     newListCounter: store.newListCounter,
                     listNameActive: false,
-                    modalActive: null,
+                    modalActive: false,
                     listToDelete: null,
                     markedSong: null
                 })
@@ -82,7 +82,7 @@ export const useGlobalStore = () => {
                     currentList: payload,
                     newListCounter: store.newListCounter + 1,
                     listNameActive: false,
-                    modalActive: null,
+                    modalActive: false,
                     listToDelete: null,
                     markedSong: null
                 })
@@ -94,7 +94,7 @@ export const useGlobalStore = () => {
                     currentList: null,
                     newListCounter: store.newListCounter,
                     listNameActive: false,
-                    modalActive: null,
+                    modalActive: false,
                     listToDelete: null,
                     markedSong: null
                 });
@@ -106,7 +106,7 @@ export const useGlobalStore = () => {
                     currentList: payload,
                     newListCounter: store.newListCounter,
                     listNameActive: false,
-                    modalActive: null,
+                    modalActive: false,
                     listToDelete: null,
                     markedSong: null
                 });
@@ -118,7 +118,7 @@ export const useGlobalStore = () => {
                     currentList: payload,
                     newListCounter: store.newListCounter,
                     listNameActive: true,
-                    modalActive: null,
+                    modalActive: false,
                     listToDelete: null,
                     markedSong: null
                 });
@@ -271,6 +271,14 @@ export const useGlobalStore = () => {
     }
     store.redo = function () {
         tps.doTransaction();
+    }
+
+    store.hasUndo = function () {
+        return tps.hasTransactionToUndo();
+    }
+
+    store.hasRedo = function () {
+        return tps.hasTransactionToRedo();
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
