@@ -169,12 +169,13 @@ export const useGlobalStore = () => {
 
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = function (id, newName) {
+        if (newName === "") { return } // check if name is empty
         // GET THE LIST
         async function asyncChangeListName(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
                 let playlist = response.data.playlist;
-                if (playlist.name === newName) {return} //check if name was changed, return if not
+                if (playlist.name === newName) { return } //check if name was changed, return if not
                 playlist.name = newName;
                 async function updateList(playlist) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
@@ -204,7 +205,6 @@ export const useGlobalStore = () => {
     store.createNewList = function () {
         async function asyncCreateNewList() {
             let response = await api.createPlaylist({ "name": "Untitled", "songs":[] });
-            console.log(response);
             if (response.data.success) {
                 let playlist = response.data.playlist;
                 storeReducer({
@@ -429,6 +429,7 @@ export const useGlobalStore = () => {
     }
 
     store.addEditSongTransaction = function (editedSong) {
+        if (store.currentList.songs[store.markedSong] === editedSong) { return }
         let transaction = new EditSong_Transaction(store, store.markedSong, store.currentList.songs[store.markedSong], editedSong);
         tps.addTransaction(transaction);
     }
@@ -449,7 +450,6 @@ export const useGlobalStore = () => {
     }
 
     store.addMoveSongTransaction = function (sourceIndex, targetIndex) {
-        console.log("transacting...")
         let transaction = new MoveSong_Transaction(store, sourceIndex, targetIndex);
         tps.addTransaction(transaction);
     }
@@ -459,7 +459,6 @@ export const useGlobalStore = () => {
         let song = editedList[oldIndex]
         editedList.splice(oldIndex, 1);
         editedList.splice(newIndex, 0, song);
-        console.log(editedList);
         store.currentList.songs = editedList;
 
         async function asyncMoveSong() {

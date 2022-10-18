@@ -38,10 +38,6 @@ function EditSongModal() {
       (store.markedSong !== null) ? store.currentList.songs[store.markedSong] : null
     );
   }, [store.markedSong, store.currentList]);
-  
-  useEffect(() => {
-    console.log("changing song..." + ((song !== null) ? song.title : null));
-  }, [song]);
 
   return (
       <div className={store.modalActive === 'edit-song' ? 'modal is-visible' : 'modal'} id='edit-song-modal' data-animation='slideInOutLeft'>

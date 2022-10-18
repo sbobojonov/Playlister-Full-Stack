@@ -11,7 +11,10 @@ import { useHistory } from 'react-router-dom'
 function EditToolbar() {
     const { store } = useContext(GlobalStoreContext);
     const history = useHistory();
-    const [editStatus, setEditStatus] = useState(true);
+    const [editStatus, setEditStatus] = useState(false);
+    const [undoStatus, setUndoStatus] = useState(false);
+    const [redoStatus, setRedoStatus] = useState(false);
+
 
     let enabledButtonClass = "playlister-button";
 
@@ -20,12 +23,10 @@ function EditToolbar() {
     }
 
     function handleUndo() {
-        console.log("undoing");
         store.undo();
     }
     
     function handleRedo() {
-        console.log("redoing");
         store.redo();
     }
     
@@ -34,24 +35,42 @@ function EditToolbar() {
         store.closeCurrentList();
     }
 
+    // THIS FUNCTION SETS THE STATE FOR EDITING, UNDOING, AND REDOING
     useEffect(() => {
         if (store.currentList === null || store.modalActive !== false) {
-            setEditStatus(true);
-        } else {
             setEditStatus(false);
+            setUndoStatus(false);
+            setRedoStatus(false);
+        } else {
+            setEditStatus(true);
+            setUndoStatus(store.hasUndo());
+            setRedoStatus(store.hasRedo());
         }
     }, [store.currentList, store.modalActive]);
     
+    // THIS FUNCTION DETECTS CTRL+Z AND CTRL+Y COMBINATIONS
+    useEffect(() => {    
+        function handleKeyDown(e) {
+            if ((e.ctrlKey || e.metaKey ) && e.key === 'z' && undoStatus) {
+                handleUndo();
+            } else if ((e.ctrlKey || e.metaKey ) && e.key === 'y' && redoStatus) {
+                handleRedo();
+            }
+        }
     
-    let undoStatus = store.hasUndo() && (store.modalActive === false);
-    let redoStatus = store.hasRedo() && (store.modalActive === false);
+        document.addEventListener('keydown', handleKeyDown);
+        
+        return () => {
+          document.removeEventListener('keydown', handleKeyDown); //cleanup
+        }
+      }, [undoStatus, redoStatus]);
 
     return (
         <span id="edit-toolbar">
             <input
                 type="button"
                 id='add-song-button'
-                disabled={editStatus}
+                disabled={!editStatus}
                 value="+"
                 className={enabledButtonClass}
                 onClick={handleAddSong}
@@ -75,7 +94,7 @@ function EditToolbar() {
             <input
                 type="button"
                 id='close-button'
-                disabled={editStatus}
+                disabled={!editStatus}
                 value="&#x2715;"
                 className={enabledButtonClass}
                 onClick={handleClose}
